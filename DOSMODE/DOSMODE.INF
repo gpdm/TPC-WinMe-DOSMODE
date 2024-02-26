@@ -1,0 +1,107 @@
+; DOSMODE.INF
+; This is the Setup information file to install the Windows Millennium Edition MS-DOS Mode Patch.
+
+[VERSION]
+AdvancedINF=2.5, %AdvPackWarn%
+signature=$CHICAGO$
+
+[DefaultInstall]
+RequiredEngine=SetupAPI,"Fatal Error - missing setupapi.dll"
+;Standard INF Options
+CopyFiles=DOSMode.Copy.Root,DOSMode.Copy.Win,DOSMode.Copy.System,DOSMode.Copy.Command
+DelReg=DOSMode.DelReg
+AddReg=DOSMode.AddReg
+;Advanced INF Options
+BeginPrompt=DOSMode.BeginPrompt
+RunPostSetupCommands=DOSMode.PostSetup
+
+[DestinationDirs]
+; 10=Windows, 11=SYSTEM, 12=IOSUBSYS, 13=COMMAND, 14=Control Panel, 15=Printers, 16=Workgroup
+; 17=INF, 18=Help, 19=Administration, 20=Fonts, 21=Viewers, 22=VMM32, 23=Color, 25=Shared
+; 26=Winboot, 27=Machine, 28=Host Winboot, 30=Boot drv root, 31=Root of Boot drv Host
+; 00=Null (new) LDID, 01=Source drv:\path, 02=Temp Setup, 03=Uninstall, 04=Backup
+DOSMode.Copy.Root = 30
+DOSMode.Copy.Win = 10
+DOSMode.Copy.System = 11
+DOSMode.Copy.Command = 13
+
+[DOSMode.BeginPrompt]
+Prompt = %BeginPrompt%
+ButtonType = <YESNO | OKCANCEL>
+Title = MS-DOS Mode Patch
+
+[DOSMode.PostSetup]
+attrib.exe -r -s -h %30%\AUTOEXEC.BAT
+attrib.exe -r -s -h %30%\CONFIG.SYS
+attrib.exe +r +s +h %30%\IO.SYS
+attrib.exe +r +s +h %30%\COMMAND.COM
+
+
+[DOSMode.Copy.Root]
+COMMAND.COM,,,4
+IO.SYS,winboot.sys,,4
+
+[DOSMode.Copy.Win]
+COMMAND.COM,,,4
+"Exit to DOS.pif",EXIT_DOS.PIF,,4
+IO8EMMOK.SYS,,,4
+WIN.COM,,,4
+
+[DOSMode.Copy.System]
+PIFMGR.DLL,,,4
+REGENV32.EXE,,,4
+WINOA386.MOD,,,4
+
+[DOSMode.Copy.Command]
+SYS.COM,,,4
+
+
+[DOSMode.DelReg]
+;NoRealMode
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\WinOldApp\","NoRealMode",
+;HIMEM Remove Values
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\HIMEM\","Config.Sys",
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\HIMEM\","Flags",
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\HIMEM\","Order",
+;HIMEM Remove Key
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\HIMEM\",
+
+[DOSMode.AddReg]
+;IO8EMMOK
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK",,,"IO8EMMOK XMS Driver Wrapper"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK","Config.Sys",,"Device=%WINBOOTDIR%\IO8EMMOK.Sys"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK","Flags",1,1B,00,00,00
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK","Order",1,00,00,00,10
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK","StdOption",1,02,00,00,00
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK","TipText",,"Allows EMM386 to operate with the Windows XMS driver included in IO.SYS."
+
+
+[Strings]
+;Non-localizable
+LANG=		"EN"
+LocaleID=	"UPD"
+Guid=		"{9d93581f-ed31-4b51-9e6f-172b31881a5a}"
+VERSION=	"4.90.3000.0"
+UpdID=		"311561"
+UpdateKey=	"Software\Microsoft\Windows\CurrentVersion\Setup\Updates"
+SPKey=		"WinME"
+
+;Localizable strings
+UpdName="Windows Millennium MS-DOS Mode Patch"
+AdvPackWarn="You need a newer version of advpack.dll."
+SrcDiskName="MS-DOS Mode Patch"
+BeginPrompt="[PRE-RELEASE BUILD] Install MS-DOS Mode support for Windows Millennium Edition?"
+
+[SourceDisksNames]
+55=%SrcDiskName%,"",0
+
+[SourceDisksFiles]
+COMMAND.COM=55
+EXIT_DOS.PIF=55
+IO8EMMOK.SYS=55
+PIFMGR.DLL=55
+REGENV32.EXE=55
+SYS.COM=55
+WIN.COM=55
+WINBOOT.SYS=55
+WINOA386.MOD=55

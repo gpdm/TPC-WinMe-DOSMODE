@@ -1,0 +1,113 @@
+IO8EMMOK - A supplemental driver for MS-DOS 8.00 (a.k.a
+Windows ME Real-Mode DOS)
+
+Version 1.3
+
+Copyright(C) 2022 Dr. Pufeng Du
+
+Introduction:
+
+IO8EMMOK provides  a set  of tools and drivers that allow
+you to load Windows 3.xx in  Enhanced Mode in MS-DOS 8.00
+real mode.   This was thought to  be impossible before we
+have IO8EMMOK.   Most  of the  reports online  found that
+MS-DOS 8.00   can   only   start Windows 3.xx in Standard
+Mode, but  not in  Enhanced Mode.  This is because MS-DOS
+8.00 refuses  to load EMM386.EXE normally by default. The
+system will  hang if  EMM386.EXE is  loaded  directly  in
+CONFIG.SYS, even  after the  Real Mode DOS patch has been
+applied.  (As   MS-DOS  8.00  has  built-in  XMS  driver,
+HIMEM.SYS is  no longer  needed here.)  However,  Windows
+3.xx relies  on GEMMIS API to take over the system memory
+management, which  is provided solely by EMM386.EXE. (You
+may try  QEMM386 /  386Max. They  claim to provide GEMMIS
+API. But,  neither will work.) IO8EMMOK driver  fixes the
+bug that  hangs the system in loading EMM386.EXE. It also
+adapts the  built-in XMS  driver for  Windows 3.xx. It is
+packed with  an in-memory patch for MS-DOS 8.00 kernel to
+work around  various checks  in loading Windows 3.xx (In-
+memory version  W3XStart patch).  The Windows 3.xx can be
+loaded after properly loading IO8EMMOK driver and the in-
+memory patch  program.  Please  note  that  Windows  3.xx
+WIN386.EXE still needs to be patched if your installation
+is on  a  FAT32  partition.  IO8EMMOK  document  provides
+instructions on  how to patch Windows For Workgroups 3.11
+WIN386.EXE. This  may not  apply  to  other  versions  of
+Windows 3.xx.  You will  need to  find your  own patch or
+adapt the  patching instructions  for your own version of
+WIN386.EXE.
+
+Package contents:
+
+IO8EMMOK.SYS   The driver;
+IO8EMMOK.TXT   This document;
+IO8EMMOK.ASM   The source code of the driver;
+IO8EMMOK.BAT   Compile script for the driver;
+W3XSTART.COM   In-memory patch to start Windows 3.xx;
+W3XSTART.C     The source code of the W3XTART.COM;
+W3XSTART.BAT   Compile script for the W3XSTART.C.
+
+Installation:
+
+1. Put  the IO8EMMOK.SYS  and W3XSTART.COM  in  your  DOS
+directory.
+
+2. Load  the IO8EMMOK.SYS  as the  first device driver in
+your CONFIG.SYS.
+
+     DEVICE=C:\DOS\IO8EMMOK.SYS
+
+3.  Load   EMM386.EXE  after  the  above  line.  Use  any
+parameters as you wish.
+
+4. Add  the following  in your  AUTOEXEC.BAT, better  the
+last line.
+
+     C:\DOS\W3XSTART.EXE
+
+5. Update mouse driver to Microsoft Mouse Driver 9.01
+
+6. Reboot your system.
+
+7. Start Windows 3.xx in enhanced mode.
+
+If this  does not work, pleae report bugs on github, with
+a comprehensive  copy of your CONFIG.SYS / AUTOEXEC.BAT /
+MSDOS.SYS and  screenshots that  can help  reproduce  the
+bug.
+
+Conditions:
+
+1. This  must be  done AFTER  you can boot into real-mode
+MS-DOS 8.00.
+
+2. Your  computer MUST use the Normal / KBC / 8042 way of
+A20 gate  control, not  the fast  /  BIOS  way.  Because,
+currently, IO8EMMOK  only includes  KBC A20  gate control
+methods. Other methods may be added in future versions.
+
+3. You  can start  your Windows  3.xx  in  standard  mode
+before using this driver.
+
+License:
+
+IO8EMMOK is free software: you can redistribute it and/or
+modify it  under the  terms of  the  GNU  General  Public
+License as  published by  the Free  Software  Foundation,
+either version  2 of the License, or (at your option) any
+later version.
+This program  is distributed  in the hope that it will be
+useful,  but  WITHOUT  ANY  WARRANTY;  without  even  the
+implied warranty  of MERCHANTABILITY  or  FITNESS  FOR  A
+PARTICULAR PURPOSE.  See the  GNU General  Public License
+for more details.
+You should have received a copy of the GNU General Public
+License  along   with   this   program.   If   not,   see
+<https://www.gnu.org/licenses/>.
+
+Compile:
+
+The IO8EMMOK.ASM can be compiled using MASM 6.15.
+The W3XSTART.C  can be  compiled using  Microsoft Quick C
+2.5.
+
