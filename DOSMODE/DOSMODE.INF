@@ -4,60 +4,145 @@
 [VERSION]
 AdvancedINF=2.5, %AdvPackWarn%
 signature=$CHICAGO$
+; consume Windows ME default INF files for standard file sources
+LayoutFile=layout.inf, layout1.inf, layout2.inf
+
 
 [DefaultInstall]
 RequiredEngine=SetupAPI,"Fatal Error - missing setupapi.dll"
 ;Standard INF Options
-CopyFiles=DOSMode.Copy.Root,DOSMode.Copy.Win,DOSMode.Copy.System,DOSMode.Copy.Command
-DelReg=DOSMode.DelReg
-AddReg=DOSMode.AddReg
+CopyFiles=Install.Copy.Root,Install.Copy.Windows,Install.Copy.Windows.Inf,Install.Copy.Windows.System,Install.Copy.Windows.Command,Install.Copy.Windows.Options.Install
+DelReg=Install.DelReg
+AddReg=Install.AddReg
+UpdateCfgSys=Install.CfgSys
 ;Advanced INF Options
-BeginPrompt=DOSMode.BeginPrompt
-RunPostSetupCommands=DOSMode.PostSetup
+BeginPrompt=Install.BeginPrompt
+RunPreSetupCommands=RunCommands.PreSetup
+RunPostSetupCommands=RunCommands.PostSetup
+
+
+[Uninstall]
+BeginPrompt=Uninstall.BeginPrompt
+CopyFiles=Uninstall.Copy.Root,Uninstall.Copy.Windows,Uninstall.Copy.Windows.System,Uninstall.Copy.Windows.Command
+DelFiles=Uninstall.Del.Windows,Uninstall.Del.Windows.Inf,Uninstall.Del.Windows.Options.Install
+AddReg=Uninstall.AddReg
+DelReg=Uninstall.DelReg
+UpdateCfgSys=Uninstall.CfgSys
+RunPreSetupCommands=RunCommands.PreSetup
+RunPostSetupCommands=RunCommands.PostSetup
+
+
 
 [DestinationDirs]
+; general locations:
 ; 10=Windows, 11=SYSTEM, 12=IOSUBSYS, 13=COMMAND, 14=Control Panel, 15=Printers, 16=Workgroup
 ; 17=INF, 18=Help, 19=Administration, 20=Fonts, 21=Viewers, 22=VMM32, 23=Color, 25=Shared
 ; 26=Winboot, 27=Machine, 28=Host Winboot, 30=Boot drv root, 31=Root of Boot drv Host
 ; 00=Null (new) LDID, 01=Source drv:\path, 02=Temp Setup, 03=Uninstall, 04=Backup
-DOSMode.Copy.Root = 30
-DOSMode.Copy.Win = 10
-DOSMode.Copy.System = 11
-DOSMode.Copy.Command = 13
 
-[DOSMode.BeginPrompt]
-Prompt = %BeginPrompt%
+
+; Install Locations
+Install.Copy.Root = 30
+Install.Copy.Windows = 10
+Install.Copy.Windows.Inf = 17
+Install.Copy.Windows.System = 11
+Install.Copy.Windows.Options.Install = 10,OPTIONS\INSTALL
+;
+; Yes, the Install.Copy.Windows.Command should actually be pointing to "13",
+; as in C:\WINDOWS\COMMAND, but because of System File Protection, we cannot
+; currently install any files there.
+; So SYS.COM and FORMAT.COM will be copied to C:\WINDOWS for the time,
+; as this takes precedence in %PATH%, and will override the crippled original
+; command files of Windows Me.
+;
+Install.Copy.Windows.Command = 10
+
+
+; Uninstall Locations
+Uninstall.Copy.Root = 30
+Uninstall.Copy.Windows = 10
+Uninstall.Copy.Windows.System = 11
+Uninstall.Copy.Windows.Command = 13
+Uninstall.Del.Windows = 10
+Uninstall.Del.Windows.Inf = 17
+Uninstall.Del.Windows.Options.Install = 10,OPTIONS\INSTALL
+
+
+[Install.BeginPrompt]
+Prompt = %BeginPromptInstall%
 ButtonType = <YESNO | OKCANCEL>
-Title = MS-DOS Mode Patch
+Title = %UpdName%
 
-[DOSMode.PostSetup]
+
+[Uninstall.BeginPrompt]
+Prompt = %BeginPromptUninstall%
+ButtonType = <YESNO | OKCANCEL>
+Title = %UpdName%
+
+
+[RunCommands.PreSetup]
+; ensure files are writable
+attrib.exe -r -s -h %30%\AUTOEXEC.BAT
+attrib.exe -r -s -h %30%\CONFIG.SYS
+attrib.exe -r -s -h %30%\IO.SYS
+attrib.exe -r %30%\COMMAND.COM
+attrib.exe -r %10%\COMMAND.COM
+
+
+[RunCommands.PostSetup]
 attrib.exe -r -s -h %30%\AUTOEXEC.BAT
 attrib.exe -r -s -h %30%\CONFIG.SYS
 attrib.exe +r +s +h %30%\IO.SYS
-attrib.exe +r +s +h %30%\COMMAND.COM
+attrib.exe +r %30%\COMMAND.COM
+attrib.exe +r %10%\COMMAND.COM
 
 
-[DOSMode.Copy.Root]
-COMMAND.COM,,,4
-IO.SYS,winboot.sys,,4
+;
+; INSTALL SECTION
+;
 
-[DOSMode.Copy.Win]
-COMMAND.COM,,,4
-"Exit to DOS.pif",EXIT_DOS.PIF,,4
-IO8EMMOK.SYS,,,4
-WIN.COM,,,4
+[Install.Copy.Root]
+COMMAND.COM,COMMAND.CO_,,4
+IO.SYS,WINBOOT.SY_,,4
 
-[DOSMode.Copy.System]
-PIFMGR.DLL,,,4
-REGENV32.EXE,,,4
-WINOA386.MOD,,,4
+[Install.Copy.Windows]
+COMMAND.COM,COMMAND.CO_,,4
+"Exit to DOS.pif",EXIT_DOS.PI_,,4
+IO8EMMOK.SYS,IO8EMMOK.SY_,,4
+WIN.COM,WIN.CO_,,4
 
-[DOSMode.Copy.Command]
-SYS.COM,,,4
+[Install.Copy.Windows.Inf]
+DOSMODE.INF,,,4
 
+[Install.Copy.Windows.System]
+PIFMGR.DLL,PIFMGR.DL_,,12
+REGENV32.EXE,REGENV32.EX_,,4
+WINOA386.MOD,WINOA386.MO_,,4
 
-[DOSMode.DelReg]
-;NoRealMode
+[Install.Copy.Windows.Command]
+; NOTE: Although it says "Command" (hence C:\WINDOWS\COMMAND),
+; dir target is currently set to C:\WINDOWS as explained above.
+; This is intentional until SFP can be fixed, just leave as is!
+SYS.COM,SYS.CO_,,8
+FORMAT.COM,FORMAT.CO_,,8
+
+[Install.Copy.Windows.Options.Install]
+SYS.CO_,SYS.CO_,,4
+FORMAT.CO_,FORMAT.CO_,,4
+COMMAND.CO_,COMMAND.CO_,,4
+WINBOOT.SY_,WINBOOT.SY_,,4
+WIN.CO_,WIN.CO_,,4
+PIFMGR.DL_,PIFMGR.DL_,,4
+REGENV32.EX_,REGENV32.EX_,,4
+WINOA386.MO_,WINOA386.MO_,,4
+
+[Install.CfgSys]
+; register IO8EMMOK as first driver in config.sys
+DevAddDev=IO8EMMOK.SYS,DEVICE,1
+DevAddDev=IFSHLP.SYS,DEVICE
+
+[Install.DelReg]
+; Remove NoRealMode, hence ENABLING Real Mode in shutdown menu
 HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\WinOldApp\","NoRealMode",
 ;HIMEM Remove Values
 HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\HIMEM\","Config.Sys",
@@ -66,14 +151,76 @@ HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\HIMEM\","Order",
 ;HIMEM Remove Key
 HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\HIMEM\",
 
-[DOSMode.AddReg]
-;IO8EMMOK
+[Install.AddReg]
+; register IO8EMMOK
 HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK",,,"IO8EMMOK XMS Driver Wrapper"
 HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK","Config.Sys",,"Device=%WINBOOTDIR%\IO8EMMOK.Sys"
 HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK","Flags",1,1B,00,00,00
 HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK","Order",1,00,00,00,10
 HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK","StdOption",1,02,00,00,00
 HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK","TipText",,"Allows EMM386 to operate with the Windows XMS driver included in IO.SYS."
+; register UNINSTALL key
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\DOSMode","DisplayName",,"%UpdName%"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\DOSMode","UninstallString",,"RunDLL setupx.dll,InstallHinfSection Uninstall 4 DOSMODE.inf"
+
+
+;
+; UNINSTALL SECTION
+;
+
+[Uninstall.AddReg]
+; Add NoRealMode, hence DISABLING Real Mode from shutdown menu
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\WinOldApp","NoRealMode",1,01,00,00,00
+; Add HIMEM values
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\HIMEM",,,""
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\HIMEM","Config.Sys",,"Device=%WINBOOTDIR%\Himem.Sys"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\HIMEM","Flags",1,07,00,00,00
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\HIMEM","Order",1,00,00,00,10
+
+
+[Uninstall.DelReg]
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\DOSMode"
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK"
+
+[Uninstall.Copy.Root]
+COMMAND.COM,,,4
+IO.SYS,winboot.sys,,4
+
+[Uninstall.Copy.Windows]
+COMMAND.COM,,,4
+WIN.COM,,,4
+
+[Uninstall.Del.Windows]
+"Exit to DOS.pif"
+IO8EMMOK.SYS
+
+[Uninstall.Del.Windows.Inf]
+DOSMODE.INF
+
+[Uninstall.Copy.Windows.System]
+PIFMGR.DLL,,,4
+REGENV32.EXE,,,4
+WINOA386.MOD,winoa386.new,,4
+
+[Uninstall.Copy.Windows.Command]
+SYS.COM,,,4
+FORMAT.COM,,,4
+
+[Uninstall.Del.Windows.Options.Install]
+SYS.CO_
+FORMAT.CO_
+COMMAND.CO_
+WINBOOT.SY_
+WIN.CO_
+PIFMGR.DL_
+REGENV32.EX_
+WINOA386.MO_
+
+[Uninstall.CfgSys]
+; remove IO8EMMOK from config.sys
+DevDelete=IO8EMMOK.SYS
+DevDelete=IFSHLP.SYS
+
 
 
 [Strings]
@@ -87,21 +234,26 @@ UpdateKey=	"Software\Microsoft\Windows\CurrentVersion\Setup\Updates"
 SPKey=		"WinME"
 
 ;Localizable strings
-UpdName="Windows Millennium MS-DOS Mode Patch"
+UpdName="Windows Millennium Edition MS-DOS Mode Patch"
 AdvPackWarn="You need a newer version of advpack.dll."
 SrcDiskName="MS-DOS Mode Patch"
-BeginPrompt="[PRE-RELEASE BUILD] Install MS-DOS Mode support for Windows Millennium Edition?"
+BeginPromptInstall="[PRE-RELEASE BUILD] Install MS-DOS Mode support for Windows Millennium Edition?"
+BeginPromptUninstall="Remove MS-DOS Mode support for Windows Millennium Edition?"
+
 
 [SourceDisksNames]
 55=%SrcDiskName%,"",0
 
 [SourceDisksFiles]
-COMMAND.COM=55
-EXIT_DOS.PIF=55
-IO8EMMOK.SYS=55
-PIFMGR.DLL=55
-REGENV32.EXE=55
-SYS.COM=55
-WIN.COM=55
-WINBOOT.SYS=55
-WINOA386.MOD=55
+EXIT_DOS.PI_=55
+IO8EMMOK.SY_=55
+PIFMGR.DL_=55
+SYS.CO_=55
+WIN.CO_=55
+WINBOOT.SY_=55
+WINOA386.MO_=55
+FORMAT.CO_=55
+; NOTE: These two files are not included on disk
+;       but are patched and injected at runtime (via INSTALL.BAT)
+COMMAND.CO_=55
+REGENV32.EX_=55
