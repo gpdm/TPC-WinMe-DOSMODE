@@ -67,7 +67,8 @@ This release stays mostly true to the original, except in a few points:
 ### KB311561 is not integrated
 
 As noted, the fixes to `IO.SYS` coming with KB311561 have not been integrated.
-Some runtime patching using `GSAR` is performed from `INSTALL.BAT`, so it should be possible to apply those patches at runtime.
+Some runtime patching using `GSAR` is performed from [INSTALL.BAT](DOSMODE/INSTALL.BAT) for `COMMAND.COM` and `REGENV32.EXE`,
+so it would be possible to apply the additional `IO.SYS` patches at runtime as well.
 
 
 ### Limitations for booting into MS-DOS mode
