@@ -156,4 +156,9 @@ This has to still be tried out to confirm if that assumption is correct.
 The Windows "disk format" dialog does not provide a function to create a system disk.
 This functionality can propably be restored as well by borrowing a file from Windows Me Developer Releases
 or Windows 98.
- 
+
+
+## Acknowledgment
+
+* Thanks to iMic, for the initial work
+* Thanks to V. Ashumov by [multiboot.ru](http://www.multiboot.ru/msdos8.htm) for assembling all MS-DOS 8 related documentation
