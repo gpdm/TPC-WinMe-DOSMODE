@@ -13,7 +13,7 @@ However, to furtherly evolve it, I have taken it to apply some tweaks and improv
 
 So in iMic's own words, as he had originally described this on the forums:
 
-``
+```
 This is Real Mode MS-DOS, running under Windows Millennium. Not just the patches commonly found around the internet, but the real deal. Restart to MS-DOS mode enabled, AUTOEXEC and CONFIG processed on boot, and applications can be instructed to reboot into DOS and back into Windows when they’ve completed.
 
 It achieves this by patching a couple of instructions in COMMAND.COM and REGENV32.EXE, using a specialised IO.SYS from the Windows Millennium CD, and using the MS-DOS application layer (WINOA386.MOD and PIFMGR.DLL) from Millennium Developer Release 1. "Restart in MS-DOS mode" is restored by removing the "NoRealMode" key from HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\WinOldApp in the Windows registry.
@@ -40,21 +40,21 @@ There are still some issues to work on however -
 
 
 The aim is to resolve as many issues as possible before offering this out to the public for testing, with the hope it can eventually be distributed as part of the Windows Me Bonus Extras Pack 2, and as an optional install on an upcoming maintenance release of the Update CD.
-``
+```
 
 ## What's different with this release?
 
 This release stays mostly true to the original, except in a few points:
 
-* The INF file was rewritten into an ADVANCED INF ((INF Guide)[https://www.mdgx.com/INF_web/index.htm])
+* The INF file was rewritten into an ADVANCED INF ([INF Guide](https://www.mdgx.com/INF_web/index.htm))
 * The INF installer registers install itself to the Windows registry for "uninstallation"
 * Proper uninstall functionality is provided and reverts all changes on removal
 * A BAT install file was added, which performs pre-install patching
-* neither COMMAND.COM nor REGENV32.EXE are bundled are bundled with this release, but the local files are patched instead
-* GSAR.EXE is bundled to perform in-place patching
-* SYS.COM, WINOA386.MOPD, PIFMR.DLL and WINBOOT.SYS ("IO.SYS") are still bundled
-* FORMAT.COM from Windows 98 is now bundled as prepatched copy as well
-* see also (File Source)[FILESOURCES.md] for more details on bundled and/or patched files
+* neither `COMMAND.COM` nor `REGENV32.EXE` are bundled with this release, but the local files are patched instead
+* `GSAR.EXE` is [bundled](http://ftp.lip6.fr/pub/pc/garbo/pc/fileutil/gsar110.zip) to perform in-place patching
+* `SYS.COM`, `WINOA386.MOD`, `PIFMGR.DLL` and `WINBOOT.SYS` ("IO.SYS") are still bundled
+* `FORMAT.COM` from Windows 98 is now bundled as prepatched copy as well
+* see also [File Sources](FILESOURCES.md) for more details on bundled and/or patched files
 
 
 ## Known limitations
@@ -66,15 +66,15 @@ This release stays mostly true to the original, except in a few points:
 
 ### KB311561 is not integrated
 
-As noted, the fixes to IO.SYS coming with KB311561 have not been integrated.
-Some runtime patching using GSAR is performed from INSTALL.BAT, so it should be possible to apply those patches at runtime.
+As noted, the fixes to `IO.SYS` coming with KB311561 have not been integrated.
+Some runtime patching using `GSAR` is performed from `INSTALL.BAT`, so it should be possible to apply those patches at runtime.
 
 
 ### Limitations for booting into MS-DOS mode
 
 The original author mentions this limitation, which stays unresolved for the time:
 
-``
+```
  When "Restart in MS-DOS mode" is selected, Windows checks for the presence of "Exit to DOS.pif" in C:\WINDOWS. This PIF can contain absolutely anything - you can instruct it to launch any DOS application, in MS-DOS mode or in an MS-DOS Prompt window, it doesn't matter.
 
 This could also be - for example - a script or application that does the necessary setup for restarting to a command prompt from within Windows, effectively bypassing Windows' own internal mechanisms.
@@ -116,7 +116,7 @@ On the other hand, this method has an advantage - you can also restart into MS-D
 This leaves one feature broken - right clicking a DOS application, selecting Properties > Program > Advanced > MS-DOS mode > "Use current MS-DOS configuration" to launch an application. Fixing this would involve finding out where this function is handled in the OS, and patching it to call out to EXITDOS instead.
 
 Of course patching it here would probably eliminate the need for "Exit to DOS.pif" in Start > Shutdown as well, as it's likely these are hooked to the same or similar functions. I think if this were achieved, most would consider this a satisfactory solution to handling MS-DOS mode in Windows Millennium, since it would contain all the functionality present in Windows 95/98, handled a little differently, but without the need for any compromise. 
-``
+```
 
 ### Windows Me's System File Protection (SFP) issues
 
@@ -157,7 +157,3 @@ The Windows "disk format" dialog does not provide a function to create a system 
 This functionality can propably be restored as well by borrowing a file from Windows Me Developer Releases
 or Windows 98.
  
-
-
-
-

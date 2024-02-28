@@ -1,21 +1,20 @@
+# File Sources for Windows Me MS-DOS Mode
 
-Updated Saturday, 17th June 2023
-Testing Release 1
-
-
-IO.SYS is from the Windows Millennium NETTOOLS, included on the Windows Me CD. (Contained within TOOLS\NETTOOLS\FAC\CBS.DTA; a CAB file.)
+* `IO.SYS` is from the Windows Millennium NETTOOLS, included on the Windows Me CD. (Contained within `TOOLS\NETTOOLS\FAC\CBS.DTA`; a CAB file.)
 
     This file contains the XMS driver, IFSHLP driver and Windows boot logo, and does not require any additional lines added to CONFIG.SYS or AUTOEXEC.BAT to start Windows. It also contains the Windows Millennium Boot Menu accessible by holding CTRL on startup, allowing the user to choose Normal, Safe Mode, Command Line Only, etc.
     
     Decompressed with Rudolph Loew's IO8DCOMP, and the "Now preparing to start your new computer..." string displayed on startup has been replaced with "Starting Windows Millennium Edition...".
 
 
-COMMAND.COM is from the Windows Millennium NETTOOLS, included on the Windows Me CD. (Contained within TOOLS\NETTOOLS\FAC\LTOOLS.DTA; a CAB file.)
+* COMMAND.COM is not bundled, but locally patched
 
-    This file is unmodified. Provides the full Command Interpreter under MS-DOS 8.0.
+    An unmodified version of `COMMAND.COM` can be taken from the Windows Millennium NETTOOLS on the Windows Me CD instead.
+    This is contained within `TOOLS\NETTOOLS\FAC\LTOOLS.DTA`; a CAB file.
 
+    The reason for not bundling it is to apply the patches to the locally installed `COMMAND.COM` instead, retaining it in localized language.
 
-REGENV32.EXE is from Windows Millennium Edition, and can be patched in place.
+* `REGENV32.EXE` is not bundled either, for the same reason as mentioned for `COMMAND.COM`
 
     Hex Offset 0xBB7A, values 53 59 53 are replaced with 57 49 4E (replaces "SYS" with "WIN"), and Hex Offset 0xBB8C, values 42 41 54 are replaced with 57 49 4E (replaces "BAT" with "WIN").
     
