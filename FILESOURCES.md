@@ -1,15 +1,15 @@
-# File Sources for Windows Me MS-DOS Mode
+# File Sources and other Alterations for Windows Me MS-DOS Mode
 
-* `IO.SYS` is from the Windows Millennium NETTOOLS, included on the Windows Me CD. (Contained within `TOOLS\NETTOOLS\FAC\CBS.DTA`; a CAB file.)
+* `IO.SYS` is from the Windows Millennium `NETTOOLS`, included on the Windows Me CD. (Contained within `TOOLS\NETTOOLS\FAC\CBS.DTA`; a CAB file.)
 
-    This file contains the XMS driver, IFSHLP driver and Windows boot logo, and does not require any additional lines added to CONFIG.SYS or AUTOEXEC.BAT to start Windows. It also contains the Windows Millennium Boot Menu accessible by holding CTRL on startup, allowing the user to choose Normal, Safe Mode, Command Line Only, etc.
+    This file contains the XMS driver, `IFSHLP` driver and Windows boot logo, and does not require any additional lines added to `CONFIG.SYS` or `AUTOEXEC.BAT` to start Windows. It also contains the Windows Millennium Boot Menu accessible by holding CTRL on startup, allowing the user to choose Normal, Safe Mode, Command Line Only, etc.
     
-    Decompressed with Rudolph Loew's IO8DCOMP, and the "Now preparing to start your new computer..." string displayed on startup has been replaced with "Starting Windows Millennium Edition...".
+    Decompressed with [Rudolph Loew's IO8DCOMP](https://web.archive.org/web/20200225224314/https://rloewelectronics.com/free.htm), and the "Now preparing to start your new computer..." string displayed on startup has been replaced with "Starting Windows Millennium Edition...".
 
 
 * `COMMAND.COM` is not bundled, but locally patched
 
-    An unmodified version of `COMMAND.COM` could be taken from the Windows Millennium NETTOOLS on the Windows Me CD instead, requiring no patching.
+    An unmodified version of `COMMAND.COM` could be taken from the Windows Millennium `NETTOOLS` on the Windows Me CD instead, requiring no patching.
     This version of `COMMAND.COM` is contained within `TOOLS\NETTOOLS\FAC\LTOOLS.DTA`; a CAB file.
 
     The reason for not bundling it is to apply the patches to the locally installed `COMMAND.COM` instead, retaining `COMMAND.COM` in the localized language.
@@ -25,7 +25,7 @@
 
 * `SYS.COM` is from Windows Millennium Developer Release 1 (Build 2332).
 
-    This file is unmodified. Its behaviour is otherwise the same as SYS.COM in Windows 98 Second Edition, however the version information in the DR1 build is already updated for MS-DOS 8.0, so no patches are required to overcome the "Incorrect DOS version" error.
+    This file is unmodified. Its behaviour is otherwise the same as `SYS.COM` in Windows 98 Second Edition, however the version information in the DR1 build is already updated for MS-DOS 8.0, so no patches are required to overcome the "Incorrect DOS version" error.
     
     `SYS.COM` allows the user to copy MS-DOS system files to a specified drive letter and make it bootable. The `SYS` command included in the retail release of Windows Millennium disables this feature and instructs the user to create a Startup Disk in Control Panel > Add/Remove Programs instead. Replacing `SYS.COM` restores its original functionality.
 
@@ -53,9 +53,9 @@
 
     Both the Millennium DR1 and Windows 98 files are unmodified, direct drop-in replacements. Both contain different code internally, but appear to otherwise behave the same.
     
-    This file handles the use of .PIF files, MS-DOS application properties (from Right Click > Properties), the creation of temporary AUTOEXEC.BAT and CONFIG.SYS files when restarting into MS-DOS mode, and specifies the commands that should be issued to `WIN.COM` when leaving MS-DOS mode.
+    This file handles the use of .PIF files, MS-DOS application properties (from Right Click > Properties), the creation of temporary `AUTOEXEC.BAT` and `CONFIG.SYS` files when restarting into MS-DOS mode, and specifies the commands that should be issued to `WIN.COM` when leaving MS-DOS mode.
     
-    The `PIFMGR.DLL` included in the retail release of Windows Millennium returns an error when restarting into MS-DOS mode that the AUTOEXEC.APP and CONFIG.APP temporary files were unable to be created in the C:\ directory due to permissions (existing files marked read-only) or lack of free space. Using the DR1 or 98 version of this file resolves this error.
+    The `PIFMGR.DLL` included in the retail release of Windows Millennium returns an error when restarting into MS-DOS mode that the `AUTOEXEC.APP` and `CONFIG.APP` temporary files were unable to be created in the C:\ directory due to permissions (existing files marked read-only) or lack of free space. Using the DR1 or 98 version of this file resolves this error.
 
 ​
 
@@ -74,11 +74,16 @@ There is one more optional file:
     This allows applications and games that require EMS memory to run within the Real Mode DOS environment, and not just within the Windows protected mode environment. (In theory, this even allows Windows 3.11 to be run in 386 Enhanced Mode, in tandem with Windows Millennium on MS-DOS 8.)
 
 ​
+# Windows Registry Changes
 
-Then there's the alterations made within the Windows registry:
+    `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\WinOldApp\NoRealMode` is deleted. This allows the "Restart in MS-DOS mode" option to appear in the Shut Down dialog.
+    
+    The `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\HIMEM` key is deleted. Because `IO.SYS` calls on its own integrated XMS driver, loading `HIMEM` in `CONFIG.SYS` is no longer required. Removing this key prevents the `DEVICE=C:\WINDOWS\Himem.Sys` line from being added by default when right clicking an MS-DOS program, and selecting Properties > Program > Advanced > MS-DOS Mode > Specify a new MS-DOS configuration.
+    
+    `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK\` has been added to call `WINDOWS\IO8EMMOK.SYS` before `EMM386.EXE` by default when creating a custom `AUTOEXEC` and `CONFIG` in the MS-DOS application properties window.
 
-    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\WinOldApp\NoRealMode is deleted. This allows the "Restart in MS-DOS mode" option to appear in the Shut Down dialog.
-    
-    The HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\HIMEM key is deleted. Because IO.SYS calls on its own integrated XMS driver, loading HIMEM in CONFIG.SYS is no longer required. Removing this key prevents the "DEVICE=C:\WINDOWS\Himem.Sys" line from being added by default when right clicking an MS-DOS program, and selecting Properties > Program > Advanced > MS-DOS Mode > Specify a new MS-DOS configuration.
-    
-    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\MS-DOSOptions\IO8EMMOK\ has been added to call WINDOWS\IO8EMMOK.SYS before EMM386.EXE by default when creating a custom AUTOEXEC and CONFIG in the MS-DOS application properties window.
+
+# Uninstall Capability
+
+An uninstall functionality is implemented, so all of the changed files and registry modifications will be
+reverted when uninstalling `MS-DOS Mode for Windows Millennium Edition" from the Software control panel.
