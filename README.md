@@ -159,6 +159,45 @@ This functionality can propably be restored as well by borrowing a file from Win
 or Windows 98.
 
 
+## Known Issues
+
+### Incomplete Install when running "right-click" INF file install
+
+The default of the "right-click" context menu option to install an INF is calling just the standard INF installer.
+
+The INF file is however an Advanced INF. To run the install correctly, run the included `INSTALL.BAT` instead.
+
+
+## Install complaining about missing files!
+
+Yes, the INF installer cannot patch files in place.
+
+The overcome that limitation, the `INSTALL.BAT` performs the patching upfront before running the INF installer.
+
+Please always run the included `INSTALL.BAT`.
+
+
+## I end up having two versions of `SYS` and `FORMAT`
+
+Yes, that's a known issue bound to the System File Protection.
+
+As long as this isn't properly implemented, the fully function `SYS` and `FORMAT` commands are copied
+to `C:\WINDOWS`, instead of `C:\WINDOWS\COMMAND`.
+
+Hence you'll end up with two copies for the time.
+As long as you're NOT in the current working directory `C:\WINDOWS\COMMAND` the other copies
+installed to `C:\WINDOWS` will take precedence.
+
+ 
+## The INF installer seems stuck on `ATTRIB`
+
+Yes, this can happen sometimes, as the installer tries resetting file permissions.
+If that didn't work, it's pausing.
+
+Simply close the `ATTRIB` command window, the INF installer will automatically resume.
+
+
+
 ## Acknowledgment
 
 * Thanks to iMic, for the initial work

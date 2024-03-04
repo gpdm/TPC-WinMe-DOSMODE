@@ -62,7 +62,16 @@ Install.Copy.Windows.Command = 10
 Uninstall.Copy.Root = 30
 Uninstall.Copy.Windows = 10
 Uninstall.Copy.Windows.System = 11
-Uninstall.Copy.Windows.Command = 13
+Uninstall.Copy.Windows.Command = 10
+;
+; Yes, the Unnstall.Copy.Windows.Command should actually be pointing to "13",
+; as in C:\WINDOWS\COMMAND, but because of System File Protection, we cannot
+; currently install any files there.
+; So SYS.COM and FORMAT.COM will be copied to C:\WINDOWS for the time,
+; as this takes precedence in %PATH%, and will override the crippled original
+; command files of Windows Me.
+; Hence for the uninstall, we must also remove it from C:\WINDOWS as well.
+;
 Uninstall.Del.Windows = 10
 Uninstall.Del.Windows.Inf = 17
 Uninstall.Del.Windows.Options.Install = 10,OPTIONS\INSTALL
