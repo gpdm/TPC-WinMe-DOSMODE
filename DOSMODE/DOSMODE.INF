@@ -116,7 +116,7 @@ IO.SYS,WINBOOT.SY_,,4
 
 [Install.Copy.Windows]
 COMMAND.COM,COMMAND.CO_,,4
-"Exit to DOS.pif",EXIT_DOS.PI_,,4
+"%DosModePifFileName%",EXIT_DOS.PI_,,4
 IO8EMMOK.SYS,IO8EMMOK.SY_,,4
 WIN.COM,WIN.CO_,,4
 
@@ -200,7 +200,7 @@ COMMAND.COM,,,4
 WIN.COM,,,4
 
 [Uninstall.Del.Windows]
-"Exit to DOS.pif"
+"%DosModePifFileName%"
 IO8EMMOK.SYS
 
 [Uninstall.Del.Windows.Inf]
@@ -231,7 +231,7 @@ DevDelete=IO8EMMOK.SYS
 DevDelete=IFSHLP.SYS
 
 
-
+; English / Default
 [Strings]
 ;Non-localizable
 LANG=		"EN"
@@ -242,12 +242,26 @@ UpdID=		"311561"
 UpdateKey=	"Software\Microsoft\Windows\CurrentVersion\Setup\Updates"
 SPKey=		"WinME"
 
-;Localizable strings
+; Localizable strings
 UpdName="Windows Millennium Edition MS-DOS Mode Patch"
 AdvPackWarn="You need a newer version of advpack.dll."
 SrcDiskName="MS-DOS Mode Patch"
 BeginPromptInstall="[PRE-RELEASE BUILD] Install MS-DOS Mode support for Windows Millennium Edition?"
 BeginPromptUninstall="Remove MS-DOS Mode support for Windows Millennium Edition?"
+
+; Localizable Filenames
+DosModePifFileName="Exit to DOS.pif"
+
+; German
+[Strings.0407]
+UpdName="Windows Millennium Edition MS-DOS-Modus Patch"
+AdvPackWarn="Sie benötigen eine neuere Version von advpack.dll."
+SrcDiskName="MS-DOS Mode Patch"
+BeginPromptInstall="[PRE-RELEASE BUILD] MS-DOS-Modus für Windows Millennium Edition installieren?"
+BeginPromptUninstall="MS-DOS-Modus für Windows Millennium Edition entfernen
+
+; Localizable Filenames
+DosModePifFileName="MS-DOS-Modus.pif"
 
 
 [SourceDisksNames]

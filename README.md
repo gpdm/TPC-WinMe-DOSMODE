@@ -44,10 +44,12 @@ The aim is to resolve as many issues as possible before offering this out to the
 
 ## What's different with this release?
 
-This release stays mostly true to the original, except in a few points:
+This release stays mostly true to the original, with some improvements and changes in the following areas:
 
 * The INF file was rewritten into an ADVANCED INF ([INF Guide](https://www.mdgx.com/INF_web/index.htm))
 * The INF installer registers install itself to the Windows registry for "uninstallation"
+* localization was added, to make it work with other language versions
+ * only GERMAN is currently implemented besides ENGLISH
 * Proper uninstall functionality is provided and reverts all changes on removal
 * A BAT install file was added, which performs pre-install patching
 * neither `COMMAND.COM` nor `REGENV32.EXE` are bundled with this release, but the local files are patched instead
@@ -195,6 +197,20 @@ Yes, this can happen sometimes, as the installer tries resetting file permission
 If that didn't work, it's pausing.
 
 Simply close the `ATTRIB` command window, the INF installer will automatically resume.
+
+
+## MS-DOS Mode doesn't work from Shutdown Dialog on <LANG> version of Windows Me
+
+Yes, that's to be expected.
+
+The installer copies a PIF File to `C:\WINDOWS\Exit to DOS.pif`.
+
+This file must be localized for your language version, e.g. for the german version of Windows Me,
+the file must be named `C:\WINDOWS\MS-DOS-Modus.pif`.
+
+The installer already does that for the german version of Windows Me.
+But you may need to add the localized sections for your localized copy of Windows,
+including the correct target filename for the `Exit to DOS.pif`. 
 
 
 
