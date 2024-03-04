@@ -212,6 +212,7 @@ The installer already does that for the german version of Windows Me.
 But you may need to add the localized sections for your localized copy of Windows,
 including the correct target filename for the `Exit to DOS.pif`. 
 
+See also [DOSMODE.INF](https://github.com/gpdm/TPC-WinMe-DOSMODE/blob/main/DOSMODE/DOSMODE.INF#L245-L264). 
 
 
 ## Acknowledgment
